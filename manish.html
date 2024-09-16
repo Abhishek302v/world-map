@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Location Survey</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f3a683, #f7d794);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        h1 {
+            margin-top: 40px;
+            color: #fff;
+            font-size: 2.5em;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        #surveyForm {
+            margin-top: 30px;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-in-out forwards;
+        }
+
+        #surveyForm label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        #surveyForm input,
+        #surveyForm textarea {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-top: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #surveyForm input:focus,
+        #surveyForm textarea:focus {
+            border-color: #f3a683;
+            box-shadow: 0 0 8px rgba(243, 166, 131, 0.4);
+            outline: none;
+        }
+
+        #surveyForm button {
+            padding: 12px 0;
+            background-color: #f3a683;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #surveyForm button:hover {
+            background-color: #f7d794;
+            color: #333;
+            transform: translateY(-2px);
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 30px;
+            border-radius: 12px;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-in-out 0.5s forwards;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>World Location Survey</h1>
+
+    <div id="surveyForm">
+        <label for="location">Selected Location:</label>
+        <input type="text" id="location" placeholder="Click on the map to select a location" readonly>
+
+        <label for="comments">Comments:</label>
+        <textarea id="comments" placeholder="Write your feedback here..." rows="4"></textarea>
+
+        <button onclick="submitSurvey()">Submit Survey</button>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        let map, marker;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 0, lng: 0 },
+                zoom: 2,
+            });
+
+            map.addListener("click", (event) => {
+                const latLng = event.latLng;
+
+                if (!marker) {
+                    marker = new google.maps.Marker({
+                        position: latLng,
+                        map: map,
+                        draggable: true,
+                    });
+                } else {
+                    marker.setPosition(latLng);
+                }
+
+                document.getElementById("location").value = `Latitude: ${latLng.lat().toFixed(6)}, Longitude: ${latLng.lng().toFixed(6)}`;
+            });
+        }
+
+        function submitSurvey() {
+            const location = document.getElementById("location").value;
+            const comments = document.getElementById("comments").value;
+
+            if (!location) {
+                alert("Please select a location on the map.");
+                return;
+            }
+
+            if (!comments) {
+                alert("Please provide your comments.");
+                return;
+            }
+
+            alert(`Survey Submitted!\nLocation: ${location}\nComments: ${comments}`);
+        }
+    </script>
+
+    <!-- Replace YOUR_API_KEY with your actual API key -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+
+</body>
+</html>
